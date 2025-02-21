@@ -27,23 +27,30 @@ import {
 } from "@/components/ui/table"
 import { useEffect, useState } from "react";
 
-
-
+// Define the type for the data
+interface Todo {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
 
 export default function Page() {
     const navigate = useNavigate();
-   
+
     const handleLogout = () => {
         localStorage.removeItem("user");
         navigate("/");
     };
 
-    const [dataTable , setdataTable] = useState([])
-    useEffect (()=>{
+    // Define the state with the correct type
+    const [dataTable, setdataTable] = useState<Todo[]>([]);
+
+    useEffect(() => {
         fetch('https://jsonplaceholder.typicode.com/todos')
-        .then(response => response.json())
-        .then(json => setdataTable(json.slice(0,10)))
-    } ,[]);
+            .then(response => response.json())
+            .then((json: Todo[]) => setdataTable(json.slice(0, 10)));
+    }, []);
 
     return (
         <SidebarProvider>
@@ -78,18 +85,17 @@ export default function Page() {
                             <TableCaption>A list of your recent invoices.</TableCaption>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[100px]">Invoice</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Amount</TableHead>
+                                    <TableHead className="w-[100px]">User ID</TableHead>
+                                    <TableHead>Title</TableHead>
+                                    <TableHead className="text-right">Completed</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                               {dataTable.map((data)=>(
-                                
-                                    <TableRow>
+                                {dataTable.map((data) => (
+                                    <TableRow key={data.id}>
                                         <TableCell className="font-medium">{data.userId}</TableCell>
                                         <TableCell>{data.title}</TableCell>
-                                        <TableCell className="text-right">{data.complete ? "yes" : "no"}</TableCell>
+                                        <TableCell className="text-right">{data.completed ? "yes" : "no"}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
